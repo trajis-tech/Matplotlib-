@@ -1,0 +1,103 @@
+{
+  "version": 1,
+  "templates": [
+    {
+      "key": "rect_mu",
+      "label": "單高斯中心 μ",
+      "type": "number",
+      "default": 172,
+      "description": "鏈 A 固定中心，不隨 A 縮放"
+    },
+    {
+      "key": "rect_sigma2",
+      "label": "單高斯 σ²",
+      "type": "number",
+      "default": 25,
+      "description": "鏈 A 變異數，規格維持 25"
+    },
+    {
+      "key": "min_area_ratio",
+      "label": "最小面積比",
+      "type": "number",
+      "default": 0.05,
+      "description": "候選矩形面積須達整張影像的比例"
+    },
+    {
+      "key": "A0",
+      "label": "基準平均灰階 A0",
+      "type": "number",
+      "default": 186,
+      "description": "外部均值縮放基準"
+    },
+    {
+      "key": "mu1",
+      "label": "高斯中心 μ1",
+      "type": "number",
+      "default": 83,
+      "description": "原始高斯中心，實際使用 μ1' = μ1 × r"
+    },
+    {
+      "key": "mu2",
+      "label": "高斯中心 μ2",
+      "type": "number",
+      "default": 101,
+      "description": "原始高斯中心，實際使用 μ2' = μ2 × r"
+    },
+    {
+      "key": "mu3",
+      "label": "高斯中心 μ3",
+      "type": "number",
+      "default": 119,
+      "description": "原始高斯中心，實際使用 μ3' = μ3 × r"
+    },
+    {
+      "key": "mu4",
+      "label": "高斯中心 μ4",
+      "type": "number",
+      "default": 145,
+      "description": "原始高斯中心，實際使用 μ4' = μ4 × r"
+    },
+    {
+      "key": "sigma2",
+      "label": "四重高斯 σ²",
+      "type": "number",
+      "default": 25,
+      "description": "鏈 B 變異數，規格維持 25"
+    },
+    {
+      "key": "T",
+      "label": "二值化門檻 T",
+      "type": "number",
+      "default": 150,
+      "description": "原始門檻，實際使用 T' = T × r"
+    },
+    {
+      "key": "invert",
+      "label": "反轉二值化",
+      "type": "boolean",
+      "default": true,
+      "description": "啟用後 y_cap ≤ T' 為白、> 為黑"
+    },
+    {
+      "key": "crop_ratio",
+      "label": "中央裁剪比例",
+      "type": "number",
+      "default": 0.5,
+      "description": "裁剪寬高為大矩形的此比例，中心對齊"
+    },
+    {
+      "key": "min_run",
+      "label": "視覺黑帶最小厚度",
+      "type": "number",
+      "default": 3,
+      "description": "連續列數下限，用來略過 1–2 px 碎點。由起點向外取 3 條達此厚度的視覺黑帶，全部算正確"
+    },
+    {
+      "key": "line_fill",
+      "label": "橫向黑比例門檻",
+      "type": "number",
+      "default": 0.55,
+      "description": "起點左右視窗內黑像素比例達此值才算視覺黑帶"
+    }
+  ]
+}

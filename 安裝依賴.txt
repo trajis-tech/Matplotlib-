@@ -1,0 +1,91 @@
+@echo off
+setlocal EnableExtensions
+cd /d "%~dp0"
+
+set "HERE=%~dp0"
+set "PY_EXE="
+set "REQ="
+set "GETPIP="
+set "CURL=%SystemRoot%\System32\curl.exe"
+set "CERTUTIL=%SystemRoot%\System32\certutil.exe"
+
+if exist "%HERE%portable_python\python.exe" set "PY_EXE=%HERE%portable_python\python.exe"
+if not defined PY_EXE if exist "%HERE%..\portable_python\python.exe" set "PY_EXE=%HERE%..\portable_python\python.exe"
+if not defined PY_EXE if exist "%HERE%portable_python\Scripts\python.exe" set "PY_EXE=%HERE%portable_python\Scripts\python.exe"
+
+if exist "%HERE%requirements.txt" set "REQ=%HERE%requirements.txt"
+if not defined REQ if exist "%HERE%..\requirements.txt" set "REQ=%HERE%..\requirements.txt"
+
+if not defined PY_EXE (
+    echo ERROR: portable_python\python.exe not found.
+    echo Looked in:
+    echo   %HERE%portable_python\python.exe
+    echo   %HERE%..\portable_python\python.exe
+    echo Put portable Python next to this script, or in the parent folder.
+    pause
+    exit /b 1
+)
+
+if not defined REQ (
+    echo ERROR: requirements.txt not found.
+    pause
+    exit /b 1
+)
+
+for %%I in ("%PY_EXE%") do set "PY_DIR=%%~dpI"
+set "GETPIP=%PY_DIR%get-pip.py"
+
+echo Using: %PY_EXE%
+echo Req:   %REQ%
+echo.
+
+"%PY_EXE%" -m pip --version >nul 2>nul
+if not errorlevel 1 goto :havepip
+
+echo pip not found. Downloading get-pip.py ...
+if exist "%CURL%" (
+    "%CURL%" -L --fail --silent --show-error -o "%GETPIP%" https://bootstrap.pypa.io/get-pip.py
+) else (
+    "%CERTUTIL%" -urlcache -split -f https://bootstrap.pypa.io/get-pip.py "%GETPIP%" >nul
+)
+if errorlevel 1 goto :dlfail
+if not exist "%GETPIP%" goto :dlfail
+
+echo Installing pip ...
+"%PY_EXE%" "%GETPIP%" --no-warn-script-location
+if errorlevel 1 goto :pipfail
+del /q "%GETPIP%" >nul 2>nul
+
+:havepip
+echo Installing packages ...
+"%PY_EXE%" -m pip install --upgrade --disable-pip-version-check --no-warn-script-location -r "%REQ%"
+if errorlevel 1 (
+    echo ERROR: package install failed.
+    pause
+    exit /b 1
+)
+
+echo.
+echo Done. Versions:
+"%PY_EXE%" -c "import numpy,cv2,PIL; print('numpy', numpy.__version__); print('cv2', cv2.__version__); print('PIL', PIL.__version__)"
+if errorlevel 1 (
+    echo ERROR: packages installed but import failed.
+    pause
+    exit /b 1
+)
+
+echo.
+pause
+exit /b 0
+
+:dlfail
+echo ERROR: failed to download get-pip.py. Check network.
+if exist "%GETPIP%" del /q "%GETPIP%" >nul 2>nul
+pause
+exit /b 1
+
+:pipfail
+echo ERROR: pip bootstrap failed.
+if exist "%GETPIP%" del /q "%GETPIP%" >nul 2>nul
+pause
+exit /b 1
